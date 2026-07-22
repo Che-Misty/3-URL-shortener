@@ -1,0 +1,47 @@
+template: testify
+
+packages:
+  url-shortener/internal/service/url:
+    config:
+      dir: "{{.InterfaceDir}}/mocks"
+      filename: "{{.InterfaceName}}.go"
+      pkgname: "mocks"
+      structname: "Mock{{.InterfaceName}}"
+    interfaces:
+      Storage:
+
+  url-shortener/internal/http-server/handlers/url/save:
+    config:
+      dir: "{{.InterfaceDir}}/mocks"
+      filename: "{{.InterfaceName}}.go"
+      pkgname: "mocks"
+      structname: "Mock{{.InterfaceName}}"
+    interfaces:
+      URLSaver:
+
+  url-shortener/internal/http-server/handlers/url/delete:
+    config:
+      dir: "{{.InterfaceDir}}/mocks"
+      filename: "{{.InterfaceName}}.go"
+      pkgname: "mocks"
+      structname: "Mock{{.InterfaceName}}"
+    interfaces:
+      URLDeleter:
+
+  url-shortener/internal/http-server/handlers/url/update:
+    config:
+      dir: "{{.InterfaceDir}}/mocks"
+      filename: "{{.InterfaceName}}.go"
+      pkgname: "mocks"
+      structname: "Mock{{.InterfaceName}}"
+    interfaces:
+      URLUpdater:
+
+  url-shortener/internal/http-server/handlers/url/redirect:
+    config:
+      dir: "{{.InterfaceDir}}/mocks"
+      filename: "{{.InterfaceName}}.go"
+      pkgname: "mocks"
+      structname: "Mock{{.InterfaceName}}"
+    interfaces:
+      URLGetter:
