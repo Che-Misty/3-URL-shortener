@@ -5,6 +5,8 @@
 package mocks
 
 import (
+	"context"
+
 	mock "github.com/stretchr/testify/mock"
 )
 
@@ -36,8 +38,8 @@ func (_m *MockURLUpdater) EXPECT() *MockURLUpdater_Expecter {
 }
 
 // UpdateURL provides a mock function for the type MockURLUpdater
-func (_mock *MockURLUpdater) UpdateURL(alias string, newURL string) (int64, error) {
-	ret := _mock.Called(alias, newURL)
+func (_mock *MockURLUpdater) UpdateURL(ctx context.Context, alias string, newURL string) (int64, error) {
+	ret := _mock.Called(ctx, alias, newURL)
 
 	if len(ret) == 0 {
 		panic("no return value specified for UpdateURL")
@@ -45,16 +47,16 @@ func (_mock *MockURLUpdater) UpdateURL(alias string, newURL string) (int64, erro
 
 	var r0 int64
 	var r1 error
-	if returnFunc, ok := ret.Get(0).(func(string, string) (int64, error)); ok {
-		return returnFunc(alias, newURL)
+	if returnFunc, ok := ret.Get(0).(func(context.Context, string, string) (int64, error)); ok {
+		return returnFunc(ctx, alias, newURL)
 	}
-	if returnFunc, ok := ret.Get(0).(func(string, string) int64); ok {
-		r0 = returnFunc(alias, newURL)
+	if returnFunc, ok := ret.Get(0).(func(context.Context, string, string) int64); ok {
+		r0 = returnFunc(ctx, alias, newURL)
 	} else {
 		r0 = ret.Get(0).(int64)
 	}
-	if returnFunc, ok := ret.Get(1).(func(string, string) error); ok {
-		r1 = returnFunc(alias, newURL)
+	if returnFunc, ok := ret.Get(1).(func(context.Context, string, string) error); ok {
+		r1 = returnFunc(ctx, alias, newURL)
 	} else {
 		r1 = ret.Error(1)
 	}
@@ -67,25 +69,31 @@ type MockURLUpdater_UpdateURL_Call struct {
 }
 
 // UpdateURL is a helper method to define mock.On call
+//   - ctx context.Context
 //   - alias string
 //   - newURL string
-func (_e *MockURLUpdater_Expecter) UpdateURL(alias any, newURL any) *MockURLUpdater_UpdateURL_Call {
-	return &MockURLUpdater_UpdateURL_Call{Call: _e.mock.On("UpdateURL", alias, newURL)}
+func (_e *MockURLUpdater_Expecter) UpdateURL(ctx any, alias any, newURL any) *MockURLUpdater_UpdateURL_Call {
+	return &MockURLUpdater_UpdateURL_Call{Call: _e.mock.On("UpdateURL", ctx, alias, newURL)}
 }
 
-func (_c *MockURLUpdater_UpdateURL_Call) Run(run func(alias string, newURL string)) *MockURLUpdater_UpdateURL_Call {
+func (_c *MockURLUpdater_UpdateURL_Call) Run(run func(ctx context.Context, alias string, newURL string)) *MockURLUpdater_UpdateURL_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		var arg0 string
+		var arg0 context.Context
 		if args[0] != nil {
-			arg0 = args[0].(string)
+			arg0 = args[0].(context.Context)
 		}
 		var arg1 string
 		if args[1] != nil {
 			arg1 = args[1].(string)
 		}
+		var arg2 string
+		if args[2] != nil {
+			arg2 = args[2].(string)
+		}
 		run(
 			arg0,
 			arg1,
+			arg2,
 		)
 	})
 	return _c
@@ -96,7 +104,7 @@ func (_c *MockURLUpdater_UpdateURL_Call) Return(n int64, err error) *MockURLUpda
 	return _c
 }
 
-func (_c *MockURLUpdater_UpdateURL_Call) RunAndReturn(run func(alias string, newURL string) (int64, error)) *MockURLUpdater_UpdateURL_Call {
+func (_c *MockURLUpdater_UpdateURL_Call) RunAndReturn(run func(ctx context.Context, alias string, newURL string) (int64, error)) *MockURLUpdater_UpdateURL_Call {
 	_c.Call.Return(run)
 	return _c
 }

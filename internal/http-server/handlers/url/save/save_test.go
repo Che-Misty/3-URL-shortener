@@ -9,6 +9,7 @@ import (
 	"net/http/httptest"
 	"testing"
 
+	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/require"
 
 	"url-shortener/internal/http-server/handlers/url/save"
@@ -38,7 +39,7 @@ func doRequest(t *testing.T, urlSaverMock *mocks.MockURLSaver, url, alias string
 
 func TestSave_Success(t *testing.T) {
 	urlSaverMock := mocks.NewMockURLSaver(t)
-	urlSaverMock.On("SaveURL", "https://google.com", "test_alias").
+	urlSaverMock.On("SaveURL", mock.Anything, "https://google.com", "test_alias").
 		Return("test_alias", nil).
 		Once()
 
@@ -105,7 +106,7 @@ func TestSave_BadJSON(t *testing.T) {
 
 func TestSave_Conflict(t *testing.T) {
 	urlSaverMock := mocks.NewMockURLSaver(t)
-	urlSaverMock.On("SaveURL", "https://google.com", "test_alias").
+	urlSaverMock.On("SaveURL", mock.Anything, "https://google.com", "test_alias").
 		Return("", storage.ErrURLExist).
 		Once()
 
@@ -118,7 +119,7 @@ func TestSave_Conflict(t *testing.T) {
 
 func TestSave_InternalError(t *testing.T) {
 	urlSaverMock := mocks.NewMockURLSaver(t)
-	urlSaverMock.On("SaveURL", "https://google.com", "test_alias").
+	urlSaverMock.On("SaveURL", mock.Anything, "https://google.com", "test_alias").
 		Return("", errors.New("unexpected db error")).
 		Once()
 

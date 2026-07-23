@@ -1,9 +1,15 @@
 package main
 
 import (
+	"context"
+	"errors"
 	"log/slog"
 	"net/http"
 	"os"
+	"os/signal"
+	"syscall"
+	"time"
+
 	"url-shortener/internal/config"
 	"url-shortener/internal/http-server/handlers/url/delete"
 	"url-shortener/internal/http-server/handlers/url/redirect"
@@ -24,6 +30,8 @@ const (
 	envLocal = "local"
 	envDev   = "dev"
 	envProd  = "prod"
+
+	shutdownTimeout = 5 * time.Second
 )
 
 func main() {
@@ -46,7 +54,6 @@ func main() {
 	router := chi.NewRouter()
 
 	router.Use(middleware.RequestID)
-	//router.Use(middleware.Logger)
 	router.Use(mwLogger.New(log))
 	router.Use(middleware.Recoverer)
 	router.Use(middleware.URLFormat)
@@ -63,8 +70,6 @@ func main() {
 
 	router.Get("/url/{alias}", redirect.New(log, urlService))
 
-	log.Info("starting server", slog.String("address", cfg.Address))
-
 	srv := &http.Server{
 		Addr:         cfg.Address,
 		Handler:      router,
@@ -73,11 +78,29 @@ func main() {
 		IdleTimeout:  cfg.HTTPServer.IdleTimeout,
 	}
 
-	if err = srv.ListenAndServe(); err != nil {
-		log.Error("error starting server")
+	go func() {
+		log.Info("starting server", slog.String("address", cfg.Address))
+
+		if err := srv.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
+			log.Error("error starting server", sl.Err(err))
+		}
+	}()
+
+	stop := make(chan os.Signal, 1)
+	signal.Notify(stop, syscall.SIGINT, syscall.SIGTERM)
+	<-stop
+
+	log.Info("stopping server")
+
+	ctx, cancel := context.WithTimeout(context.Background(), shutdownTimeout)
+	defer cancel()
+
+	if err := srv.Shutdown(ctx); err != nil {
+		log.Error("failed to gracefully stop server", sl.Err(err))
+		return
 	}
 
-	log.Error("server stopped")
+	log.Info("server stopped")
 }
 
 func setupLogger(env string) *slog.Logger {
@@ -90,7 +113,6 @@ func setupLogger(env string) *slog.Logger {
 		log = slog.New(slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{Level: slog.LevelDebug}))
 	case envProd:
 		log = slog.New(slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{Level: slog.LevelInfo}))
-
 	}
 	return log
 }

@@ -5,6 +5,8 @@
 package mocks
 
 import (
+	"context"
+
 	mock "github.com/stretchr/testify/mock"
 )
 
@@ -36,8 +38,8 @@ func (_m *MockURLGetter) EXPECT() *MockURLGetter_Expecter {
 }
 
 // GetURL provides a mock function for the type MockURLGetter
-func (_mock *MockURLGetter) GetURL(alias string) (string, error) {
-	ret := _mock.Called(alias)
+func (_mock *MockURLGetter) GetURL(ctx context.Context, alias string) (string, error) {
+	ret := _mock.Called(ctx, alias)
 
 	if len(ret) == 0 {
 		panic("no return value specified for GetURL")
@@ -45,16 +47,16 @@ func (_mock *MockURLGetter) GetURL(alias string) (string, error) {
 
 	var r0 string
 	var r1 error
-	if returnFunc, ok := ret.Get(0).(func(string) (string, error)); ok {
-		return returnFunc(alias)
+	if returnFunc, ok := ret.Get(0).(func(context.Context, string) (string, error)); ok {
+		return returnFunc(ctx, alias)
 	}
-	if returnFunc, ok := ret.Get(0).(func(string) string); ok {
-		r0 = returnFunc(alias)
+	if returnFunc, ok := ret.Get(0).(func(context.Context, string) string); ok {
+		r0 = returnFunc(ctx, alias)
 	} else {
 		r0 = ret.Get(0).(string)
 	}
-	if returnFunc, ok := ret.Get(1).(func(string) error); ok {
-		r1 = returnFunc(alias)
+	if returnFunc, ok := ret.Get(1).(func(context.Context, string) error); ok {
+		r1 = returnFunc(ctx, alias)
 	} else {
 		r1 = ret.Error(1)
 	}
@@ -67,19 +69,25 @@ type MockURLGetter_GetURL_Call struct {
 }
 
 // GetURL is a helper method to define mock.On call
+//   - ctx context.Context
 //   - alias string
-func (_e *MockURLGetter_Expecter) GetURL(alias any) *MockURLGetter_GetURL_Call {
-	return &MockURLGetter_GetURL_Call{Call: _e.mock.On("GetURL", alias)}
+func (_e *MockURLGetter_Expecter) GetURL(ctx any, alias any) *MockURLGetter_GetURL_Call {
+	return &MockURLGetter_GetURL_Call{Call: _e.mock.On("GetURL", ctx, alias)}
 }
 
-func (_c *MockURLGetter_GetURL_Call) Run(run func(alias string)) *MockURLGetter_GetURL_Call {
+func (_c *MockURLGetter_GetURL_Call) Run(run func(ctx context.Context, alias string)) *MockURLGetter_GetURL_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		var arg0 string
+		var arg0 context.Context
 		if args[0] != nil {
-			arg0 = args[0].(string)
+			arg0 = args[0].(context.Context)
+		}
+		var arg1 string
+		if args[1] != nil {
+			arg1 = args[1].(string)
 		}
 		run(
 			arg0,
+			arg1,
 		)
 	})
 	return _c
@@ -90,7 +98,7 @@ func (_c *MockURLGetter_GetURL_Call) Return(s string, err error) *MockURLGetter_
 	return _c
 }
 
-func (_c *MockURLGetter_GetURL_Call) RunAndReturn(run func(alias string) (string, error)) *MockURLGetter_GetURL_Call {
+func (_c *MockURLGetter_GetURL_Call) RunAndReturn(run func(ctx context.Context, alias string) (string, error)) *MockURLGetter_GetURL_Call {
 	_c.Call.Return(run)
 	return _c
 }

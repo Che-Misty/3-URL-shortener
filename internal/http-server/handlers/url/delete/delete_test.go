@@ -9,6 +9,7 @@ import (
 	"testing"
 
 	"github.com/go-chi/chi/v5"
+	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/require"
 
 	del "url-shortener/internal/http-server/handlers/url/delete"
@@ -35,7 +36,7 @@ func doRequest(t *testing.T, urlDeleterMock *mocks.MockURLDeleter, alias string)
 
 func TestDelete_Success(t *testing.T) {
 	urlDeleterMock := mocks.NewMockURLDeleter(t)
-	urlDeleterMock.On("DeleteURL", "test_alias").
+	urlDeleterMock.On("DeleteURL", mock.Anything, "test_alias").
 		Return(int64(1), nil).
 		Once()
 
@@ -64,7 +65,7 @@ func TestDelete_EmptyAlias(t *testing.T) {
 
 func TestDelete_InternalError(t *testing.T) {
 	urlDeleterMock := mocks.NewMockURLDeleter(t)
-	urlDeleterMock.On("DeleteURL", "test_alias").
+	urlDeleterMock.On("DeleteURL", mock.Anything, "test_alias").
 		Return(int64(0), errors.New("db is down")).
 		Once()
 

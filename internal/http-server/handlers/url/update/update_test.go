@@ -8,6 +8,7 @@ import (
 	"net/http/httptest"
 	"testing"
 
+	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/require"
 
 	"url-shortener/internal/http-server/handlers/url/update"
@@ -30,7 +31,7 @@ func doRequest(t *testing.T, urlUpdaterMock *mocks.MockURLUpdater, body []byte) 
 
 func TestUpdate_Success(t *testing.T) {
 	urlUpdaterMock := mocks.NewMockURLUpdater(t)
-	urlUpdaterMock.On("UpdateURL", "test_alias", "https://example.com").
+	urlUpdaterMock.On("UpdateURL", mock.Anything, "test_alias", "https://example.com").
 		Return(int64(1), nil).
 		Once()
 
@@ -109,7 +110,7 @@ func TestUpdate_BadJSON(t *testing.T) {
 
 func TestUpdate_InternalError(t *testing.T) {
 	urlUpdaterMock := mocks.NewMockURLUpdater(t)
-	urlUpdaterMock.On("UpdateURL", "test_alias", "https://example.com").
+	urlUpdaterMock.On("UpdateURL", mock.Anything, "test_alias", "https://example.com").
 		Return(int64(0), errors.New("db is down")).
 		Once()
 

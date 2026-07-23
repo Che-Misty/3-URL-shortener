@@ -1,6 +1,7 @@
 package save
 
 import (
+	"context"
 	"errors"
 	"log/slog"
 	"net/http"
@@ -26,7 +27,7 @@ type Response struct {
 //go:generate go run github.com/vektra/mockery/v3@v3.7.1
 
 type URLSaver interface {
-	SaveURL(urlToSave string, alias string) (string, error)
+	SaveURL(ctx context.Context, urlToSave string, alias string) (string, error)
 }
 
 //goland:noinspection GoTypeAssertionOnErrors
@@ -63,7 +64,7 @@ func New(log *slog.Logger, urlSaver URLSaver) http.HandlerFunc {
 			return
 		}
 
-		alias, err := urlSaver.SaveURL(req.URL, req.Alias)
+		alias, err := urlSaver.SaveURL(r.Context(), req.URL, req.Alias)
 		if err != nil {
 			if errors.Is(err, storage.ErrURLExist) {
 				log.Info("url already exist", slog.String("url", req.URL))

@@ -1,6 +1,7 @@
 package delete
 
 import (
+	"context"
 	"log/slog"
 	"net/http"
 	resp "url-shortener/internal/lib/api/response"
@@ -17,7 +18,7 @@ type Response struct {
 }
 
 type URLDeleter interface {
-	DeleteURL(alias string) (int64, error)
+	DeleteURL(ctx context.Context, alias string) (int64, error)
 }
 
 func New(log *slog.Logger, urlDeleter URLDeleter) http.HandlerFunc {
@@ -39,7 +40,7 @@ func New(log *slog.Logger, urlDeleter URLDeleter) http.HandlerFunc {
 			return
 		}
 
-		rows, err := urlDeleter.DeleteURL(alias)
+		rows, err := urlDeleter.DeleteURL(r.Context(), alias)
 		if err != nil {
 			log.Error("failed to delete url", sl.Err(err))
 

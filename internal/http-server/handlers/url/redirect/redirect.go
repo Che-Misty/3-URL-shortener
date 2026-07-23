@@ -1,6 +1,7 @@
 package redirect
 
 import (
+	"context"
 	"errors"
 	"log/slog"
 	"net/http"
@@ -14,7 +15,7 @@ import (
 )
 
 type URLGetter interface {
-	GetURL(alias string) (string, error)
+	GetURL(ctx context.Context, alias string) (string, error)
 }
 
 func New(log *slog.Logger, urlGetter URLGetter) http.HandlerFunc {
@@ -35,7 +36,7 @@ func New(log *slog.Logger, urlGetter URLGetter) http.HandlerFunc {
 			return
 		}
 
-		resURL, err := urlGetter.GetURL(alias)
+		resURL, err := urlGetter.GetURL(r.Context(), alias)
 		if err != nil {
 			if errors.Is(err, storage.ErrURLNotFound) {
 				log.Info("url not found", "alias", alias)

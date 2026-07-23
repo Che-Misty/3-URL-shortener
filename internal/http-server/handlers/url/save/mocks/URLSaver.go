@@ -5,6 +5,8 @@
 package mocks
 
 import (
+	"context"
+
 	mock "github.com/stretchr/testify/mock"
 )
 
@@ -36,8 +38,8 @@ func (_m *MockURLSaver) EXPECT() *MockURLSaver_Expecter {
 }
 
 // SaveURL provides a mock function for the type MockURLSaver
-func (_mock *MockURLSaver) SaveURL(urlToSave string, alias string) (string, error) {
-	ret := _mock.Called(urlToSave, alias)
+func (_mock *MockURLSaver) SaveURL(ctx context.Context, urlToSave string, alias string) (string, error) {
+	ret := _mock.Called(ctx, urlToSave, alias)
 
 	if len(ret) == 0 {
 		panic("no return value specified for SaveURL")
@@ -45,16 +47,16 @@ func (_mock *MockURLSaver) SaveURL(urlToSave string, alias string) (string, erro
 
 	var r0 string
 	var r1 error
-	if returnFunc, ok := ret.Get(0).(func(string, string) (string, error)); ok {
-		return returnFunc(urlToSave, alias)
+	if returnFunc, ok := ret.Get(0).(func(context.Context, string, string) (string, error)); ok {
+		return returnFunc(ctx, urlToSave, alias)
 	}
-	if returnFunc, ok := ret.Get(0).(func(string, string) string); ok {
-		r0 = returnFunc(urlToSave, alias)
+	if returnFunc, ok := ret.Get(0).(func(context.Context, string, string) string); ok {
+		r0 = returnFunc(ctx, urlToSave, alias)
 	} else {
 		r0 = ret.Get(0).(string)
 	}
-	if returnFunc, ok := ret.Get(1).(func(string, string) error); ok {
-		r1 = returnFunc(urlToSave, alias)
+	if returnFunc, ok := ret.Get(1).(func(context.Context, string, string) error); ok {
+		r1 = returnFunc(ctx, urlToSave, alias)
 	} else {
 		r1 = ret.Error(1)
 	}
@@ -67,25 +69,31 @@ type MockURLSaver_SaveURL_Call struct {
 }
 
 // SaveURL is a helper method to define mock.On call
+//   - ctx context.Context
 //   - urlToSave string
 //   - alias string
-func (_e *MockURLSaver_Expecter) SaveURL(urlToSave any, alias any) *MockURLSaver_SaveURL_Call {
-	return &MockURLSaver_SaveURL_Call{Call: _e.mock.On("SaveURL", urlToSave, alias)}
+func (_e *MockURLSaver_Expecter) SaveURL(ctx any, urlToSave any, alias any) *MockURLSaver_SaveURL_Call {
+	return &MockURLSaver_SaveURL_Call{Call: _e.mock.On("SaveURL", ctx, urlToSave, alias)}
 }
 
-func (_c *MockURLSaver_SaveURL_Call) Run(run func(urlToSave string, alias string)) *MockURLSaver_SaveURL_Call {
+func (_c *MockURLSaver_SaveURL_Call) Run(run func(ctx context.Context, urlToSave string, alias string)) *MockURLSaver_SaveURL_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		var arg0 string
+		var arg0 context.Context
 		if args[0] != nil {
-			arg0 = args[0].(string)
+			arg0 = args[0].(context.Context)
 		}
 		var arg1 string
 		if args[1] != nil {
 			arg1 = args[1].(string)
 		}
+		var arg2 string
+		if args[2] != nil {
+			arg2 = args[2].(string)
+		}
 		run(
 			arg0,
 			arg1,
+			arg2,
 		)
 	})
 	return _c
@@ -96,7 +104,7 @@ func (_c *MockURLSaver_SaveURL_Call) Return(s string, err error) *MockURLSaver_S
 	return _c
 }
 
-func (_c *MockURLSaver_SaveURL_Call) RunAndReturn(run func(urlToSave string, alias string) (string, error)) *MockURLSaver_SaveURL_Call {
+func (_c *MockURLSaver_SaveURL_Call) RunAndReturn(run func(ctx context.Context, urlToSave string, alias string) (string, error)) *MockURLSaver_SaveURL_Call {
 	_c.Call.Return(run)
 	return _c
 }

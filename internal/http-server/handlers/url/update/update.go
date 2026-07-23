@@ -1,6 +1,7 @@
 package update
 
 import (
+	"context"
 	"log/slog"
 	"net/http"
 
@@ -23,7 +24,7 @@ type Response struct {
 }
 
 type URLUpdater interface {
-	UpdateURL(alias string, newURL string) (int64, error)
+	UpdateURL(ctx context.Context, alias string, newURL string) (int64, error)
 }
 
 func New(log *slog.Logger, urlUpdater URLUpdater) http.HandlerFunc {
@@ -59,10 +60,7 @@ func New(log *slog.Logger, urlUpdater URLUpdater) http.HandlerFunc {
 			return
 		}
 
-		alias := req.Alias
-		url := req.NewURL
-
-		rows, err := urlUpdater.UpdateURL(alias, url)
+		rows, err := urlUpdater.UpdateURL(r.Context(), req.Alias, req.NewURL)
 		if err != nil {
 			log.Error("failed to update url", sl.Err(err))
 

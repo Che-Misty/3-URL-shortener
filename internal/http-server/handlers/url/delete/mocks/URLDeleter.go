@@ -5,6 +5,8 @@
 package mocks
 
 import (
+	"context"
+
 	mock "github.com/stretchr/testify/mock"
 )
 
@@ -36,8 +38,8 @@ func (_m *MockURLDeleter) EXPECT() *MockURLDeleter_Expecter {
 }
 
 // DeleteURL provides a mock function for the type MockURLDeleter
-func (_mock *MockURLDeleter) DeleteURL(alias string) (int64, error) {
-	ret := _mock.Called(alias)
+func (_mock *MockURLDeleter) DeleteURL(ctx context.Context, alias string) (int64, error) {
+	ret := _mock.Called(ctx, alias)
 
 	if len(ret) == 0 {
 		panic("no return value specified for DeleteURL")
@@ -45,16 +47,16 @@ func (_mock *MockURLDeleter) DeleteURL(alias string) (int64, error) {
 
 	var r0 int64
 	var r1 error
-	if returnFunc, ok := ret.Get(0).(func(string) (int64, error)); ok {
-		return returnFunc(alias)
+	if returnFunc, ok := ret.Get(0).(func(context.Context, string) (int64, error)); ok {
+		return returnFunc(ctx, alias)
 	}
-	if returnFunc, ok := ret.Get(0).(func(string) int64); ok {
-		r0 = returnFunc(alias)
+	if returnFunc, ok := ret.Get(0).(func(context.Context, string) int64); ok {
+		r0 = returnFunc(ctx, alias)
 	} else {
 		r0 = ret.Get(0).(int64)
 	}
-	if returnFunc, ok := ret.Get(1).(func(string) error); ok {
-		r1 = returnFunc(alias)
+	if returnFunc, ok := ret.Get(1).(func(context.Context, string) error); ok {
+		r1 = returnFunc(ctx, alias)
 	} else {
 		r1 = ret.Error(1)
 	}
@@ -67,19 +69,25 @@ type MockURLDeleter_DeleteURL_Call struct {
 }
 
 // DeleteURL is a helper method to define mock.On call
+//   - ctx context.Context
 //   - alias string
-func (_e *MockURLDeleter_Expecter) DeleteURL(alias any) *MockURLDeleter_DeleteURL_Call {
-	return &MockURLDeleter_DeleteURL_Call{Call: _e.mock.On("DeleteURL", alias)}
+func (_e *MockURLDeleter_Expecter) DeleteURL(ctx any, alias any) *MockURLDeleter_DeleteURL_Call {
+	return &MockURLDeleter_DeleteURL_Call{Call: _e.mock.On("DeleteURL", ctx, alias)}
 }
 
-func (_c *MockURLDeleter_DeleteURL_Call) Run(run func(alias string)) *MockURLDeleter_DeleteURL_Call {
+func (_c *MockURLDeleter_DeleteURL_Call) Run(run func(ctx context.Context, alias string)) *MockURLDeleter_DeleteURL_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		var arg0 string
+		var arg0 context.Context
 		if args[0] != nil {
-			arg0 = args[0].(string)
+			arg0 = args[0].(context.Context)
+		}
+		var arg1 string
+		if args[1] != nil {
+			arg1 = args[1].(string)
 		}
 		run(
 			arg0,
+			arg1,
 		)
 	})
 	return _c
@@ -90,7 +98,7 @@ func (_c *MockURLDeleter_DeleteURL_Call) Return(n int64, err error) *MockURLDele
 	return _c
 }
 
-func (_c *MockURLDeleter_DeleteURL_Call) RunAndReturn(run func(alias string) (int64, error)) *MockURLDeleter_DeleteURL_Call {
+func (_c *MockURLDeleter_DeleteURL_Call) RunAndReturn(run func(ctx context.Context, alias string) (int64, error)) *MockURLDeleter_DeleteURL_Call {
 	_c.Call.Return(run)
 	return _c
 }

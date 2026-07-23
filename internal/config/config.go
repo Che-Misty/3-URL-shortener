@@ -64,13 +64,17 @@ func MustLoad() *Config {
 		log.Println("Using AUTH_PASSWORD from environment")
 	}
 
-	if alias_lengthStr := os.Getenv("ALIAS_LEN"); alias_lengthStr != "" {
-		alias_length, err := strconv.Atoi(alias_lengthStr)
+	if aliasLenStr := os.Getenv("ALIAS_LEN"); aliasLenStr != "" {
+		aliasLen, err := strconv.Atoi(aliasLenStr)
 		if err != nil {
-			log.Printf("could not parse ALIAS_LEN: %v", err)
+			log.Fatalf("invalid ALIAS_LEN %q: must be a positive integer: %v", aliasLenStr, err)
 		}
-		cfg.AliasLength = alias_length
+		cfg.AliasLength = aliasLen
 		log.Println("Using ALIAS_LEN from environment")
+	}
+
+	if cfg.AliasLength <= 0 {
+		log.Fatalf("ALIAS_LEN must be a positive integer, got %d", cfg.AliasLength)
 	}
 
 	return &cfg
